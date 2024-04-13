@@ -29,3 +29,6 @@ tests/state_of_the_union.txt
 
 # Build
 build
+model_answer/
+model_judgment
+.ipynb_checkpoints

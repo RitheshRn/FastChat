@@ -12,6 +12,7 @@ import time
 from typing import Optional
 
 import openai
+from openai import OpenAI
 import anthropic
 
 from fastchat.model.model_adapter import (
@@ -19,6 +20,8 @@ from fastchat.model.model_adapter import (
     ANTHROPIC_MODEL_LIST,
     OPENAI_MODEL_LIST,
 )
+
+client = OpenAI()
 
 # API setting constants
 API_MAX_RETRY = 16
@@ -412,14 +415,21 @@ def chat_completion_openai(model, conv, temperature, max_tokens, api_dict=None):
     for _ in range(API_MAX_RETRY):
         try:
             messages = conv.to_openai_api_messages()
-            response = openai.ChatCompletion.create(
+            # response = openai.ChatCompletion.create(
+            #     model=model,
+            #     messages=messages,
+            #     n=1,
+            #     temperature=temperature,
+            #     max_tokens=max_tokens,
+            # )
+            response = client.chat.completions.create(
                 model=model,
-                messages=messages,
+                messages=messages, 
                 n=1,
                 temperature=temperature,
-                max_tokens=max_tokens,
+                max_tokens=max_tokens
             )
-            output = response["choices"][0]["message"]["content"]
+            output = response.choices[0].message.content
             break
         except openai.error.OpenAIError as e:
             print(type(e), e)
